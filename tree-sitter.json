@@ -1,0 +1,37 @@
+{
+  "grammars": [
+    {
+      "name": "glorp",
+      "camelcase": "Glorp",
+      "scope": "source.glorp",
+      "path": ".",
+      "file-types": [
+        "glorp"
+      ],
+      "highlights": "queries/highlights.scm",
+      "injection-regex": "^glorp$"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Glorp grammar for tree-sitter",
+    "authors": [
+      {
+        "name": "Macsen Casaus",
+        "email": "macsencasaus@gmail.com"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/macsencasaus/tree-sitter-glorp"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true
+  }
+}

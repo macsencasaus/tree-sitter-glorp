@@ -1,0 +1,44 @@
+==========
+comment
+==========
+# This is a comment 
+---
+(program
+    (comment))
+
+==========
+shebang
+==========
+#!/bin/glorp
+---
+(program
+    (comment))
+
+==========
+shebang with args
+==========
+#!/bin/glorp --ast -l
+---
+(program
+    (comment))
+
+==========
+inline comment after ident
+==========
+x # This is a commment
+---
+(program
+    (identifier)
+    (comment))
+
+==========
+comments surrounding ident
+==========
+# This is a comment
+x 
+# This is another comment
+---
+(program
+    (comment)
+    (identifier)
+    (comment))

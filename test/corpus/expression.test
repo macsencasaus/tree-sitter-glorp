@@ -1,0 +1,236 @@
+==========
+unit
+==========
+()
+---
+(program
+    (unit_expression))
+
+==========
+identifier
+==========
+x
+---
+(program
+    (identifier))
+
+==========
+identifiers (semicolons)
+==========
+x; y;
+---
+(program
+    (identifier)
+    (identifier))
+
+==========
+identifiers (no semicolons)
+==========
+x y
+---
+(program
+    (identifier)
+    (identifier))
+
+==========
+int literals
+==========
+1
+22
+1887123878
+---
+(program
+    (int_literal)
+    (int_literal)
+    (int_literal))
+
+==========
+function literals
+==========
+x -> x;
+---
+(program
+    (infix_expression
+        (identifier)
+        (identifier)))
+
+==========
+list literals
+==========
+[1];
+[1,2,3];
+[];
+---
+(program
+    (list_literal
+        (int_literal))
+    (list_literal
+        (int_literal)
+        (int_literal)
+        (int_literal))
+    (list_literal))
+
+==========
+block expressions 
+==========
+{x}
+{x; 1; z;}
+{}
+---
+(program
+    (block_expression
+        (identifier))
+    (block_expression
+        (identifier)
+        (int_literal)
+        (identifier))
+    (block_expression))
+
+==========
+prefix expression
+==========
+-x
+!true
+---
+(program
+    (prefix_expression
+        (identifier))
+    (prefix_expression
+        (identifier)))
+
+==========
+assign expressions
+==========
+x = 1;
+x = y = 1;
+z :: 22;
+---
+(program
+    (assign_expression
+        (identifier)
+        (int_literal))
+    (assign_expression
+        (identifier)
+        (assign_expression
+            (identifier)
+            (int_literal)))
+    (assign_expression
+        (identifier)
+        (int_literal)))
+
+==========
+infix expressions
+==========
+x + y;
+x * y;
+1 - -2;
+x + y % z;
+x / y - z;
+---
+(program
+    (infix_expression
+        (identifier)
+        (identifier))
+    (infix_expression
+        (identifier)
+        (identifier))
+    (infix_expression
+        (int_literal)
+        (prefix_expression
+            (int_literal)))
+    (infix_expression
+        (identifier)
+        (infix_expression
+            (identifier)
+            (identifier)))
+    (infix_expression
+        (infix_expression
+            (identifier)
+            (identifier))
+        (identifier)))
+
+==========
+ternary expressions
+==========
+x ? x : x;
+x :: cond ? consq : alt;
+---
+(program
+    (ternary_expression
+        (identifier)
+        (identifier)
+        (identifier))
+    (assign_expression
+        (identifier)
+        (ternary_expression
+            (identifier)
+            (identifier)
+            (identifier))))
+
+==========
+call expressions
+==========
+func(1, 2,);
+f();
+---
+(program
+    (call_expression
+        (identifier)
+        (int_literal)
+        (int_literal))
+    (call_expression
+        (identifier)))
+
+==========
+index expressions
+==========
+list[0];
+function_that_returns_list()[1 + 2];
+---
+(program
+    (index_expression
+        (identifier)
+        (int_literal))
+    (index_expression
+        (call_expression
+            (identifier))
+        (infix_expression
+            (int_literal)
+            (int_literal))))
+
+==========
+map function
+==========
+map :: (f, list) -> 
+    !empty(list) ? {
+        x : xs = list;
+        f(x) : map(f, xs);
+    } : list;
+---
+(program
+    (assign_expression
+        (identifier)
+        (infix_expression
+            (infix_expression
+                (identifier)
+                (identifier))
+            (ternary_expression
+                (prefix_expression
+                    (call_expression
+                        (identifier)
+                        (identifier)))
+                (block_expression
+                    (assign_expression
+                        (infix_expression
+                            (identifier)
+                            (identifier))
+                        (identifier))
+                    (infix_expression
+                        (call_expression
+                            (identifier)
+                            (identifier))
+                        (call_expression
+                            (identifier)
+                            (identifier)
+                            (identifier))))
+                (identifier)))))
