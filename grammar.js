@@ -96,11 +96,9 @@ module.exports = grammar({
                 seq($._prefix_operator, field("right", $._expression)),
             ),
 
-        // infix_expression: ($) => infix_expression($, 0),
-
         infix_expression: ($) => {
             const table = [
-                [PREC.assign, choice("=", "::"), ASSOC.right],
+                [PREC.assign, $.assign_operator, ASSOC.right],
                 [PREC.pipe, "<|", ASSOC.left],
                 [PREC.pipe, "|>", ASSOC.right],
                 [PREC.function, "->", ASSOC.right],
@@ -133,7 +131,7 @@ module.exports = grammar({
                         seq(
                             field("left", $._expression),
                             // @ts-ignore
-                            operator,
+                            field("operator", operator),
                             field("right", $._expression),
                         ),
                     ),
@@ -195,6 +193,8 @@ module.exports = grammar({
         grouped_expression: ($) => seq("(", $._expression, ")"),
 
         _prefix_operator: (_) => choice("-", "!", "++", "--"),
+
+        assign_operator: (_) => choice("=", "::"),
     },
 });
 

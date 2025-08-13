@@ -108,14 +108,18 @@ z :: 22;
 (program
     (infix_expression
         (identifier)
+        (assign_operator)
         (int_literal))
     (infix_expression
         (identifier)
+        (assign_operator)
         (infix_expression
             (identifier)
+            (assign_operator)
             (int_literal)))
     (infix_expression
         (identifier)
+        (assign_operator)
         (int_literal)))
 
 ==========
@@ -162,6 +166,7 @@ x :: cond ? consq : alt;
         (identifier))
     (infix_expression
         (identifier)
+        (assign_operator)
         (ternary_expression
             (identifier)
             (identifier)
@@ -208,6 +213,7 @@ x =
 (program
     (infix_expression
         (identifier)
+        (assign_operator)
         (guards
             (identifier)
             (int_literal)
@@ -226,6 +232,7 @@ map :: (f, list) ->
 (program
     (infix_expression
         (identifier)
+        (assign_operator)
         (infix_expression
             (grouped_expression
                 (infix_expression
@@ -241,6 +248,7 @@ map :: (f, list) ->
                         (infix_expression
                             (identifier)
                             (identifier))
+                        (assign_operator)
                         (identifier))
                     (infix_expression
                         (call_expression
