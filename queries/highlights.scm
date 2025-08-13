@@ -9,9 +9,9 @@
 
 ; function definitions
 
-(assign_expression
-    left: (identifier) @Function
-    right: (function_literal))
+; (infix_expression
+;     left: (identifier) @Function
+;     right: (infix_expression (_) "->" (_))
 
 ; identifiers
 
@@ -63,7 +63,6 @@
 [
  ","
  ";"
- "\\"
 ] @punctuation.delimiter
 
 ; comments

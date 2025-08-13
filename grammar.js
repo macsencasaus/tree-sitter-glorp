@@ -26,9 +26,11 @@ const PREC = {
     prefix: 700,
     index: 800,
     compose: 900,
+    unit: 950,
     call: 1000,
     field: 1050,
-    unit: 1100,
+    guards: 1100,
+    non_op_delim: 1200,
 };
 
 const ASSOC = {
@@ -63,27 +65,28 @@ module.exports = grammar({
                 $.list_literal,
                 $.block_expression,
                 $.prefix_expression,
-                $.assign_expression,
                 $.infix_expression,
                 $.ternary_expression,
                 $.call_expression,
                 $.index_expression,
                 $.grouped_expression,
                 $.unit_expression,
+                $.guards,
             ),
 
-        unit_expression: (_) => prec(PREC.unit, "()"),
+        unit_expression: (_) => seq("(", ")"),
 
         identifier: (_) => /[a-zA-Z_][a-zA-Z0-9_]*/,
 
-        char_literal: (_) => /([^\\'\n]|\\[abfnrtv\\'"0-7xuU])/,
+        char_literal: (_) =>
+            /'(?:[^'\\]|\\[abfnrtv\\'"]|\\x[0-9A-Fa-f]{1,2}|\\[0-7]{1,3})'/,
 
         int_literal: (_) => /\d+/,
 
         float_literal: (_) => /(?:\d+\.\d*|\.\d+|\d+)(?:[eE][+-]?\d+)?/,
 
         list_literal: ($) =>
-            field("value", seq("[", commaSep($._expression), "]")),
+            field("value", seq("[", optional(commaSep($._expression)), "]")),
 
         block_expression: ($) => seq("{", optional($._expressions), "}"),
 
@@ -93,58 +96,7 @@ module.exports = grammar({
                 seq($._prefix_operator, field("right", $._expression)),
             ),
 
-        assign_expression: ($) =>
-            prec.right(
-                PREC.assign,
-                seq(
-                    field("left", $._expression),
-                    choice("=", "::"),
-                    field("right", $._expression),
-                ),
-            ),
-
-        infix_expression1: ($) => {
-            const table = [
-                [PREC.assign, choice("=", "::"), ASSOC.right],
-                [PREC.pipe, "<|", ASSOC.left],
-                [PREC.pipe, "|>", ASSOC.right],
-                [PREC.function, "->", ASSOC.right],
-                [PREC.tuple, ",", ASSOC.right],
-                [PREC.lor, "||", ASSOC.left],
-                [PREC.land, "&&", ASSOC.left],
-                [PREC.bor, "|", ASSOC.left],
-                [PREC.xor, "^", ASSOC.left],
-                [PREC.band, "&", ASSOC.left],
-                [
-                    PREC.equals,
-                    choice("==", "!=", ">", "<", ">=", "<="),
-                    ASSOC.left,
-                ],
-                [PREC.shift, choice("<<", ">>"), ASSOC.left],
-                [PREC.append, ":", ASSOC.right],
-                [PREC.sum, choice("+", "-"), ASSOC.left],
-                [PREC.product, choice("*", "/", "%"), ASSOC.left],
-                [PREC.compose, "<<<", ASSOC.left],
-                [PREC.compose, ">>>", ASSOC.right],
-                [PREC.field, ".", ASSOC.left],
-            ];
-
-            return choice(
-                ...table.map(([precedence, operator, assoc]) =>
-                    // @ts-ignore
-                    (assoc == ASSOC.left ? prec.left : prec.right)(
-                        // @ts-ignore
-                        precedence,
-                        seq(
-                            field("left", $._expression),
-                            // @ts-ignore
-                            operator,
-                            field("right", $._expression),
-                        ),
-                    ),
-                ),
-            );
-        },
+        // infix_expression: ($) => infix_expression($, 0),
 
         infix_expression: ($) => {
             const table = [
@@ -196,7 +148,7 @@ module.exports = grammar({
                     field("condition", $._expression),
                     "?",
                     field("consequence", $._expression),
-                    ":",
+                    prec(PREC.non_op_delim, ":"),
                     field("alternative", $._expression),
                 ),
             ),
@@ -206,7 +158,10 @@ module.exports = grammar({
                 PREC.call,
                 seq(
                     field("function", $._expression),
-                    field("argument", seq("(", commaSep($._expression), ")")),
+                    field(
+                        "argument",
+                        seq("(", optional(commaSep($._expression)), ")"),
+                    ),
                 ),
             ),
 
@@ -219,17 +174,34 @@ module.exports = grammar({
                 ),
             ),
 
+        guards: ($) =>
+            prec.left(
+                seq(
+                    "|",
+                    repeat(
+                        seq(
+                            $._expression,
+                            "=>",
+                            $._expression,
+                            prec(PREC.non_op_delim, "|"),
+                        ),
+                    ),
+                    $._expression,
+                    "=>",
+                    $._expression,
+                ),
+            ),
+
         grouped_expression: ($) => seq("(", $._expression, ")"),
 
         _prefix_operator: (_) => choice("-", "!", "++", "--"),
     },
 });
 
-/**
- * @param {Rule} rule
- *
- * @returns {ChoiceRule}
- */
 function commaSep(rule) {
-    return optional(seq(repeat(seq(rule, ",")), rule, optional(",")));
+    return sep(rule, prec(PREC.non_op_delim, ","));
+}
+
+function sep(rule, seperator) {
+    return seq(repeat(seq(rule, seperator)), optional(rule));
 }

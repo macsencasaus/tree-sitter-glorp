@@ -106,15 +106,15 @@ x = y = 1;
 z :: 22;
 ---
 (program
-    (assign_expression
+    (infix_expression
         (identifier)
         (int_literal))
-    (assign_expression
+    (infix_expression
         (identifier)
-        (assign_expression
+        (infix_expression
             (identifier)
             (int_literal)))
-    (assign_expression
+    (infix_expression
         (identifier)
         (int_literal)))
 
@@ -160,7 +160,7 @@ x :: cond ? consq : alt;
         (identifier)
         (identifier)
         (identifier))
-    (assign_expression
+    (infix_expression
         (identifier)
         (ternary_expression
             (identifier)
@@ -199,6 +199,22 @@ function_that_returns_list()[1 + 2];
             (int_literal))))
 
 ==========
+guards
+==========
+x =
+| foo => 3
+| bar => 2
+---
+(program
+    (infix_expression
+        (identifier)
+        (guards
+            (identifier)
+            (int_literal)
+            (identifier)
+            (int_literal))))
+
+==========
 map function
 ==========
 map :: (f, list) -> 
@@ -208,19 +224,20 @@ map :: (f, list) ->
     } : list;
 ---
 (program
-    (assign_expression
+    (infix_expression
         (identifier)
         (infix_expression
-            (infix_expression
-                (identifier)
-                (identifier))
+            (grouped_expression
+                (infix_expression
+                    (identifier)
+                    (identifier)))
             (ternary_expression
                 (prefix_expression
                     (call_expression
                         (identifier)
                         (identifier)))
                 (block_expression
-                    (assign_expression
+                    (infix_expression
                         (infix_expression
                             (identifier)
                             (identifier))

@@ -1,9 +1,0 @@
-map :: \(f, list) -> 
-    !empty(list) ? {
-        x : xs = list;
-        f(x) : map(f, xs);
-    } : list;
-
-compose :: \(f, g) -> f . g;
-
-x : y : xs = [1,2,3]
