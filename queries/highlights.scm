@@ -1,29 +1,74 @@
-; function calls
+(identifier) @variable
+
+((identifier) @constant
+ (#match? @constant "^[A-Z][A-Z\\d_]*$"))
 
 (call_expression
-  function: (identifier) @Function)
+  function: (identifier) @function)
 
 (call_expression
   function: (identifier) @function.builtin
   (#match? @function.builtin "^(append|len|print|println)$"))
 
-; function definitions
+(infix_expression
+  left: (identifier) @function
+  "<<<"
+  right: (identifier) @function)
 
-; (infix_expression
-;     left: (identifier) @Function
-;     right: (infix_expression (_) "->" (_))
+(infix_expression
+  left: (identifier) @function
+  ">>>"
+  right: (identifier) @function)
 
-; identifiers
+(infix_expression
+  left: (identifier) @function
+  "<|" 
+  right: (_))
 
-(identifier) @Identifier
+(infix_expression
+  left: (_)
+  "|>" 
+  right: (identifier) @function)
 
-; operators
+(infix_expression
+  left: (_)
+  "." 
+  right: (identifier) @function)
+
+(infix_expression
+  left: (identifier) @function
+  operator: (assign_operator)
+  right: (infix_expression left: (_) "->" right: (_)))
+
+(infix_expression
+  left: (identifier) @function
+  operator: (assign_operator)
+  right: (infix_expression left: (_) "<<<" right: (_)))
+
+(infix_expression
+  left: (identifier) @function
+  operator: (assign_operator)
+  right: (infix_expression left: (_) ">>>" right: (_)))
+
+(infix_expression
+  left: (identifier) @function
+  operator: (assign_operator)
+  right: (infix_expression left: (_) "<|" right: (_)))
+
+(infix_expression
+  left: (identifier) @function
+  operator: (assign_operator)
+  right: (infix_expression left: (_) "|>" right: (_)))
+
+(infix_expression
+  left: (identifier) @function
+  operator: (assign_operator)
+  right: (infix_expression left: (_) "." right: (_)))
 
 [
   "--"
   "-"
   ":"
-  "::"
   "!"
   "!="
   "*"
@@ -32,24 +77,31 @@
   "%"
   "+"
   "++"
-  "->"
   "<"
   "<="
-  "="
   "=="
   ">"
   ">="
   "?"
+  "|"
+  "&"
+  "&&"
+  "||"
+  "<<"
+  ">>"
+  (assign_operator)
+  "<|"
+  "|>"
+  "->"
+  "<<<"
+  ">>>"
   "."
 ] @operator
 
-; literals
-
 [
-    (int_literal)
+  (int_literal)
+  (float_literal)
 ] @number
-
-; punctuation
 
 [
  "("
@@ -64,7 +116,5 @@
  ","
  ";"
 ] @punctuation.delimiter
-
-; comments
 
 (comment) @comment @spell
