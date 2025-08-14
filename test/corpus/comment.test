@@ -12,7 +12,7 @@ shebang
 #!/bin/glorp
 ---
 (program
-    (comment))
+    (shebang))
 
 ==========
 shebang with args
@@ -20,7 +20,17 @@ shebang with args
 #!/bin/glorp --ast -l
 ---
 (program
-    (comment))
+    (shebang))
+
+==========
+shebang & exec
+==========
+#!/bin/sh
+exec ./glorp -a
+---
+(program
+    (shebang)
+    (exec))
 
 ==========
 inline comment after ident

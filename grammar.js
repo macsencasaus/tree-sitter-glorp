@@ -50,9 +50,12 @@ module.exports = grammar({
     extras: ($) => [/\s/, $.comment],
 
     rules: {
-        program: ($) => optional($._expressions),
+        program: ($) => seq(optional($.shebang), optional($.exec), optional($._expressions)),
 
+        shebang: (_) => token(seq("#!", /.*/)),
         comment: (_) => token(/#.*/),
+
+        exec: (_) => token(seq("exec", /.*/)),
 
         _expressions: ($) => repeat1(seq($._expression, optional(";"))),
 

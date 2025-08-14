@@ -1,3 +1,6 @@
+(shebang) @keyword
+(exec) @keyword
+
 (identifier) @variable
 
 ((identifier) @constant

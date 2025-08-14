@@ -899,6 +899,10 @@
           "named": true
         },
         {
+          "type": "exec",
+          "named": true
+        },
+        {
           "type": "float_literal",
           "named": true
         },
@@ -932,6 +936,10 @@
         },
         {
           "type": "prefix_expression",
+          "named": true
+        },
+        {
+          "type": "shebang",
           "named": true
         },
         {
@@ -1292,6 +1300,10 @@
     "extra": true
   },
   {
+    "type": "exec",
+    "named": true
+  },
+  {
     "type": "float_literal",
     "named": true
   },
@@ -1301,6 +1313,10 @@
   },
   {
     "type": "int_literal",
+    "named": true
+  },
+  {
+    "type": "shebang",
     "named": true
   },
   {
